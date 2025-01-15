@@ -4,55 +4,43 @@ namespace Calculator
 {
     public partial class MainPage : ContentPage
     {
-        private readonly StringBuilder inputBuilder;
+        private readonly StringBuilder input = new();
         public MainPage()
         {
             InitializeComponent();
-            SetupButtons();
-            SetupKeyHandling();
-
-            inputBuilder = new StringBuilder();
+            HandleButtons();
         }
 
-        private void SetupButtons()
+        private void HandleButtons()
         {
-            foreach (var child in ((Grid)Content).Children)
+            foreach (var child in BtnGrid.Children)
             {
-                if (child is Button button) {
+                if (child is Button button)
+                {
                     button.Clicked += OnButtonClicked;
                 }
             }
         }
 
-        private void SetupKeyHandling(object sender, KeyEventArgs e)
-        {
-            if (char.IsDigit(e.Key))
-            {
-                inputBuilder.Append(e.Key);
-                UpdateResult(e.Key.ToString());
-            }
-        }
-
         private void OnButtonClicked(object sender, EventArgs e)
         {
-
-            if (sender is Button button)
+            if (sender is  Button button)
             {
                 string text = button.Text;
-                
-                if (char.IsDigit(text[0]) || "+-x/-".Contains(text))
+
+                if (text == "=" || text == "⌫") //These buttons don't do anything yet
                 {
-                    inputBuilder.Append(text == "x" ? "*" : text); //Replacing 'x' with '*' for calculation purposes
-                    UpdateResult();
+                    return;
                 }
 
-                if (text == "=" || text == "⌫") return; //These buttons don't do anything at this point
+                input.Append(text);
+                UpdateResult();
             }
         }
 
         private void UpdateResult()
         {
-            ResLabel.Text = inputBuilder.ToString();
+            ResLabel.Text = input.ToString();
         }
     }
 }
