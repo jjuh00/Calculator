@@ -21,7 +21,8 @@
             </VerticalStackLayout>
         </Border>
 
-        <Grid Grid.Row="1"
+        <Grid x:Name="BtnGrid"
+              Grid.Row="1"
               RowDefinitions="*,*,*,*,*"
               ColumnDefinitions="*,*,*,*,*"
               RowSpacing="5"
