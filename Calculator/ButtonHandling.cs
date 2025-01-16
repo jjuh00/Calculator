@@ -1,4 +1,4 @@
-﻿/*namespace Calculator
+﻿namespace Calculator
 {
     public class ButtonHandling
     {
@@ -157,4 +157,3 @@
         }
     }
 }
-*/

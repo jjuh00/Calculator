@@ -2,15 +2,13 @@
 {
     public partial class MainPage : ContentPage
     {
+        private ButtonHandling btnHandling;
+        private string _input;
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void ClearPicker_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 
 }
