@@ -19,7 +19,7 @@
                 if (child is Button btn)
                 {
                     btn.Clicked += OnButtonClicked;
-                } 
+                }
             }
 
             SinPicker.SelectedIndexChanged += PickerIndexChanged;

@@ -30,8 +30,8 @@
             <Picker x:Name="SinPicker" IsVisible="False" Grid.Row="0" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
-                        <x:String>sin</x:String>
-                        <x:String>arcsin</x:String>
+                        <x:String>sin()</x:String>
+                        <x:String>arcsin()</x:String>
                     </x:Array>
                 </Picker.ItemsSource>
             </Picker>
@@ -40,8 +40,8 @@
             <Picker x:Name="CosPicker" IsVisible="False" Grid.Row="0" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
-                        <x:String>cos</x:String>
-                        <x:String>arcson</x:String>
+                        <x:String>cos()</x:String>
+                        <x:String>arccos()</x:String>
                     </x:Array>
                 </Picker.ItemsSource>
             </Picker>
@@ -50,8 +50,8 @@
             <Picker x:Name="TanPicker" IsVisible="False" Grid.Row="0" Grid.Column="2" BackgroundColor="#4d0099"  TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
-                        <x:String>tan</x:String>
-                        <x:String>arctan</x:String>
+                        <x:String>tan()</x:String>
+                        <x:String>arctan()</x:String>
                     </x:Array>
                 </Picker.ItemsSource>
             </Picker>
