@@ -27,13 +27,7 @@
               ColumnSpacing="5">
 
             <Button x:Name="SinBtn" Text="sin" Grid.Row="0" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
-            <Picker x:Name="SinPicker"
-                    IsVisible="True"
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    BackgroundColor="#4d0099"
-                    TextColor="White"
-                    SelectedIndexChanged="OnSinSelected">
+            <Picker x:Name="SinPicker" IsVisible="False" Grid.Row="0" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>sin</x:String>
@@ -43,13 +37,7 @@
             </Picker>
 
             <Button x:Name="CosBtn" Text="cos" Grid.Row="0" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
-            <Picker x:Name="CosPicker"
-                    IsVisible="False"
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    BackgroundColor="#4d0099"
-                    TextColor="White"
-                    SelectedIndexChanged="OnCosSelected">
+            <Picker x:Name="CosPicker" IsVisible="False" Grid.Row="0" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>cos</x:String>
@@ -59,13 +47,7 @@
             </Picker>
 
             <Button x:Name="TanBtn" Text="tan" Grid.Row="0" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
-            <Picker x:Name="TanPicker"
-                    IsVisible="False"
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    BackgroundColor="#4d0099"
-                    TextColor="White"
-                    SelectedIndexChanged="OnTanChanged">
+            <Picker x:Name="TanPicker" IsVisible="False" Grid.Row="0" Grid.Column="2" BackgroundColor="#4d0099"  TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>tan</x:String>
@@ -75,13 +57,7 @@
             </Picker>
 
             <Button x:Name="PiBtn" Text="π" Grid.Row="0" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
-            <Picker x:Name="ConstPicker"
-                    IsVisible="False"
-                    Grid.Row="0"
-                    Grid.Column="3"
-                    BackgroundColor="#4d0099"
-                    TextColor="White"
-                    SelectedIndexChanged="OnConstChanged">
+            <Picker x:Name="ConstPicker" IsVisible="False" Grid.Row="0" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>π</x:String>
@@ -91,13 +67,7 @@
             </Picker>
 
             <Button x:Name="LogBtn" Text="log()" Grid.Row="0" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
-            <Picker x:Name="LogPicker"
-                    IsVisible="False"
-                    Grid.Row="0"
-                    Grid.Column="4"
-                    BackgroundColor="#4d0099"
-                    TextColor="White"
-                    SelectedIndexChanged="OnLogChanged">
+            <Picker x:Name="LogPicker" IsVisible="False" Grid.Row="0" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>lg()</x:String>
@@ -117,13 +87,7 @@
             <Button Text="5" Grid.Row="2"  Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="6" Grid.Row="2"  Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
             <Button x:Name="BracketBtn" Text="( )" Grid.Row="2"  Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
-            <Picker x:Name="BracketPicker"
-                    IsVisible="False"
-                    Grid.Row="2"
-                    Grid.Column="3"
-                    BackgroundColor="#4d0099"
-                    TextColor="White"
-                    SelectedIndexChanged="OnBracketChanged">
+            <Picker x:Name="BracketPicker" IsVisible="False" Grid.Row="2" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>(</x:String>
@@ -133,13 +97,7 @@
             </Picker>
 
             <Button x:Name="BackspaceBtn" Text="⌫" Grid.Row="2"  Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
-            <Picker x:Name="ClearPicker"
-                    IsVisible="False"
-                    Grid.Row="2"
-                    Grid.Column="4"
-                    BackgroundColor="#4d0099"
-                    TextColor="White"
-                    SelectedIndexChanged="OnClearChanged">
+            <Picker x:Name="ClearPicker" IsVisible="False" Grid.Row="2" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>⌫</x:String>
