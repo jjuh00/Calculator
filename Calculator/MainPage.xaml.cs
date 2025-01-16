@@ -1,46 +1,25 @@
-﻿using System.Text;
-
-namespace Calculator
+﻿namespace Calculator
 {
     public partial class MainPage : ContentPage
     {
-        private readonly StringBuilder input = new();
+        int count = 0;
+
         public MainPage()
         {
             InitializeComponent();
-            HandleButtons();
         }
 
-        private void HandleButtons()
+        private void OnCounterClicked(object sender, EventArgs e)
         {
-            foreach (var child in BtnGrid.Children)
-            {
-                if (child is Button button)
-                {
-                    button.Clicked += OnButtonClicked;
-                }
-            }
-        }
+            count++;
 
-        private void OnButtonClicked(object sender, EventArgs e)
-        {
-            if (sender is  Button button)
-            {
-                string text = button.Text;
+            if (count == 1)
+                CounterBtn.Text = $"Clicked {count} time";
+            else
+                CounterBtn.Text = $"Clicked {count} times";
 
-                if (text == "=" || text == "⌫") //These buttons don't do anything yet
-                {
-                    return;
-                }
-
-                input.Append(text);
-                UpdateResult();
-            }
-        }
-
-        private void UpdateResult()
-        {
-            ResLabel.Text = input.ToString();
+            SemanticScreenReader.Announce(CounterBtn.Text);
         }
     }
+
 }

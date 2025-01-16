@@ -1,9 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Calculator.MainPage"
-             Title="Function Calculator"
-             BackgroundColor="#00ccff">
+             x:Class="Calculator.MainPage">
 
     <Grid RowDefinitions="*, 2*" ColumnDefinitions="*" Padding="5">
 
@@ -28,7 +26,10 @@
               RowSpacing="5"
               ColumnSpacing="5">
 
-            <Button Text="sin" Grid.Row="0" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
+            <Button Text="sin" Grid.Row="0" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" x:Name="SinBtn" />
+            <Picker>
+                
+            </Picker>
             <Button Text="cos" Grid.Row="0" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="tan" Grid.Row="0" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="π" Grid.Row="0" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
