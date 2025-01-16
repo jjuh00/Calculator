@@ -3,13 +3,21 @@
     public partial class MainPage : ContentPage
     {
         private string input;
+        private int pointerPosition;
+        private Stack<(int open, int close)> brackets;
         public MainPage()
         {
             InitializeComponent();
 
             input = string.Empty;
+            pointerPosition = 0;
+            brackets = new Stack<(int open, int close)>();
+
+            Left.Clicked += OnLeftClicked;
+            Right.Clicked += OnRightClicked;
 
             HandleButtons();
+            UpdateResult();
         }
 
         private void HandleButtons()
@@ -28,7 +36,6 @@
             ConstPicker.SelectedIndexChanged += PickerIndexChanged;
             LogPicker.SelectedIndexChanged += PickerIndexChanged;
             BracketPicker.SelectedIndexChanged += PickerIndexChanged;
-            ClearPicker.SelectedIndexChanged += PickerIndexChanged;
         }
 
         private void OnButtonClicked(object? sender, EventArgs e)
@@ -68,9 +75,19 @@
                         break;
 
                     case "⌫":
-                        //Further logic will be implemented in the futurue
-                        BackspaceBtn.IsVisible = false;
-                        ClearPicker.IsVisible = true;
+                        if (pointerPosition > 0)
+                        {
+                            input = input.Remove(pointerPosition - 1, 1);
+                            pointerPosition = Math.Max(0, pointerPosition - 1);
+                            brackets = new Stack<(int open, int close)>(
+                                brackets.Where(br => br.open >= pointerPosition || br.close >= pointerPosition)
+                                .Select(br => (
+                                    open: br.open >= pointerPosition ? br.open - 1 : br.open,
+                                    close: br.close >= pointerPosition ? br.close - 1 : br.close
+                                ))
+                            );
+                        }
+
                         break;
 
                     case "=":
@@ -78,26 +95,117 @@
                         break;
 
                     default:
-                        input += btn.Text;
-                        UpdateResult();
+                        if (pointerPosition <= input.Length)
+                        {
+                            input = input.Insert(pointerPosition, btn.Text);
+                            pointerPosition += btn.Text.Length;
+                        }
                         break;
-
                 }
+                UpdateResult();
+            }
+        }
+
+        private void OnLeftClicked(object? sender, EventArgs e)
+        {
+            if (pointerPosition > 0)
+            {
+                //Check if pointer is at closing bracket
+                var _brackets = brackets.FirstOrDefault(br => br.close == pointerPosition - 1);
+                if (_brackets != default)
+                {
+                    pointerPosition = _brackets.open + 1; //Move out of brackets before an opening bracket
+                }
+                else
+                {
+                    pointerPosition--; //Move left normally
+                }
+                UpdateResult();
+            }
+        }
+
+        private void OnRightClicked(object? sender, EventArgs e)
+        {
+            if (pointerPosition < input.Length)
+            {
+                //Check if pointer is at opening bracket
+                var _brackets = brackets.FirstOrDefault(br => br.open == pointerPosition);
+                if (_brackets != default)
+                {
+                    pointerPosition = _brackets.close + 1; //Move out of brackets after a closing brcaket
+                }
+                else
+                {
+                    pointerPosition++; //Move right normally
+                }
+                UpdateResult();
             }
         }
 
         private void PickerIndexChanged(object? sender, EventArgs e)
         {
-            if (sender is Picker picker)
+            if (sender is Picker picker && picker.SelectedIndex >= 0)
             {
-                if (picker.SelectedIndex >= 0)
+                string item = picker.Items[picker.SelectedIndex];
+
+                //Handle the pointer's position within brackets
+                if (item.Contains("()"))
                 {
-                    string item = picker.Items[picker.SelectedIndex];
+                    if (pointerPosition <= input.Length)
+                    {
+                        input = input.Insert(pointerPosition, item);
 
-                    input += $" {item} ";
+                        //Store an opening bracket and a closing bracket positions' as a pair
+                        int openingPosition = pointerPosition + item.IndexOf("(");
+                        int closingPosition = pointerPosition + item.IndexOf(")");
 
-                    UpdateResult();
+                        brackets.Push((openingPosition, closingPosition));
+
+                        //Move pointer's position between the brackets
+                        pointerPosition = openingPosition;
+                    }
                 }
+                else if (item == "(")
+                {
+                    if (pointerPosition <= input.Length)
+                    {
+                        int openPosition = pointerPosition;
+                        input = input.Insert(pointerPosition, item);
+                        pointerPosition += item.Length;
+
+                        //Store closing bracket's position as -1
+                        brackets.Push((openPosition, -1));
+                    }
+                }
+                else if (item == ")")
+                {
+                    if (pointerPosition <= input.Length)
+                    {
+                        //Find the last unclosed opening bracket
+                        var lastUnclosed = brackets.FirstOrDefault(br => br.close == -1);
+                        if (lastUnclosed != default)
+                        {
+                            //Update bracket pair with correct closing position
+                            brackets = new Stack<(int open, int close)>(
+                                brackets.Select(br =>
+                                    br.open == lastUnclosed.open ? (br.open, pointerPosition) : br)
+                            );
+                        }
+
+                        input = input.Insert(pointerPosition, item);
+                        pointerPosition += item.Length;
+                    }
+                }
+                else
+                {
+                    if (pointerPosition <= input.Length)
+                    {
+                        input = input.Insert(pointerPosition, item);
+                        pointerPosition += item.Length;
+                    }
+                }
+
+                UpdateResult();
 
                 if (picker.SelectedIndex != 1)
                 {
@@ -132,22 +240,24 @@
                             BracketPicker.IsVisible = false;
                             BracketBtn.IsVisible = true;
                             break;
-
-                        case var _ when picker == ClearPicker:
-                            ClearPicker.IsVisible = false;
-                            BackspaceBtn.IsVisible = true;
-                            break;
-
-                        default:
-                            break;
                     }
                 }
+                picker.SelectedIndex = -1;
             }
         }
 
         private void UpdateResult()
         {
-            ResLabel.Text = input;
+            //Ensuring that pointer's position (index) is in bounds
+            pointerPosition = Math.Min(pointerPosition, input.Length);
+            pointerPosition = Math.Max(0, pointerPosition);
+
+            //Show navigation buttons if there's any inputs
+            Left.IsVisible = input.Length > 0;
+            Right.IsVisible = input.Length > 0;
+
+            string text = input.Insert(pointerPosition, "|");
+            ResLabel.Text = text;
         }
     }
 }
