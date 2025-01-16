@@ -26,14 +26,86 @@
               RowSpacing="5"
               ColumnSpacing="5">
 
-            <Button Text="sin" Grid.Row="0" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" x:Name="SinBtn" />
-            <Picker>
-                
+            <Button x:Name="SinBtn" Text="sin" Grid.Row="0" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
+            <Picker x:Name="SinPicker"
+                    IsVisible="True"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    BackgroundColor="#4d0099"
+                    TextColor="White"
+                    SelectedIndexChanged="OnSinSelected">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>sin</x:String>
+                        <x:String>arcsin</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
             </Picker>
-            <Button Text="cos" Grid.Row="0" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
-            <Button Text="tan" Grid.Row="0" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
-            <Button Text="π" Grid.Row="0" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
-            <Button Text="log()" Grid.Row="0" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
+
+            <Button x:Name="CosBtn" Text="cos" Grid.Row="0" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
+            <Picker x:Name="CosPicker"
+                    IsVisible="False"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    BackgroundColor="#4d0099"
+                    TextColor="White"
+                    SelectedIndexChanged="OnCosSelected">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>cos</x:String>
+                        <x:String>arcson</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Button x:Name="TanBtn" Text="tan" Grid.Row="0" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
+            <Picker x:Name="TanPicker"
+                    IsVisible="False"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    BackgroundColor="#4d0099"
+                    TextColor="White"
+                    SelectedIndexChanged="OnTanChanged">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>tan</x:String>
+                        <x:String>arctan</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Button x:Name="PiBtn" Text="π" Grid.Row="0" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
+            <Picker x:Name="ConstPicker"
+                    IsVisible="False"
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    BackgroundColor="#4d0099"
+                    TextColor="White"
+                    SelectedIndexChanged="OnConstChanged">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>π</x:String>
+                        <x:String>e</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Button x:Name="LogBtn" Text="log()" Grid.Row="0" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
+            <Picker x:Name="LogPicker"
+                    IsVisible="False"
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    BackgroundColor="#4d0099"
+                    TextColor="White"
+                    SelectedIndexChanged="OnLogChanged">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>lg()</x:String>
+                        <x:String>ln()</x:String>
+                        <x:String>log_()</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
 
             <Button Text="7" Grid.Row="1" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="8" Grid.Row="1" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
@@ -44,8 +116,37 @@
             <Button Text="4" Grid.Row="2"  Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="5" Grid.Row="2"  Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="6" Grid.Row="2"  Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
-            <Button Text="( )" Grid.Row="2"  Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
-            <Button Text="⌫" Grid.Row="2"  Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
+            <Button x:Name="BracketBtn" Text="( )" Grid.Row="2"  Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
+            <Picker x:Name="BracketPicker"
+                    IsVisible="False"
+                    Grid.Row="2"
+                    Grid.Column="3"
+                    BackgroundColor="#4d0099"
+                    TextColor="White"
+                    SelectedIndexChanged="OnBracketChanged">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>(</x:String>
+                        <x:String>)</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Button x:Name="BackspaceBtn" Text="⌫" Grid.Row="2"  Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
+            <Picker x:Name="ClearPicker"
+                    IsVisible="False"
+                    Grid.Row="2"
+                    Grid.Column="4"
+                    BackgroundColor="#4d0099"
+                    TextColor="White"
+                    SelectedIndexChanged="OnClearChanged">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>⌫</x:String>
+                        <x:String>C</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
 
             <Button Text="1" Grid.Row="3" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="2" Grid.Row="3" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
