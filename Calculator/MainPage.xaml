@@ -11,7 +11,7 @@
                 Margin="5">
             <Grid ColumnDefinitions="Auto, *, Auto">
                 <Button x:Name="Left" 
-                        Text="←" 
+                        Text="←"
                         Grid.Column="0" 
                         FontSize="16"
                         HeightRequest="20"
