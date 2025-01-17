@@ -2,16 +2,18 @@
 {
     public partial class MainPage : ContentPage
     {
+        private readonly Calculation calc;
         private string input;
         private int pointerPosition;
-        private Stack<(int open, int close)> brackets;
+        private Stack<(int open, int close)> brackets = new();
         public MainPage()
         {
             InitializeComponent();
 
+            calc = new Calculation();
+
             input = string.Empty;
             pointerPosition = 0;
-            brackets = new Stack<(int open, int close)>();
 
             Left.Clicked += OnLeftClicked;
             Right.Clicked += OnRightClicked;
@@ -91,7 +93,15 @@
                         break;
 
                     case "=":
-                        //Logic for "equals" will be implemented in the future
+                        //Implement here "equals logic"
+                        break;
+
+                    case ".":
+                        //Implement here decimal separator logic
+                        break;
+
+                    case "":
+                        //Impelement here logic for other oparators
                         break;
 
                     default:
