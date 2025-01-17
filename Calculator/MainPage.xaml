@@ -93,7 +93,7 @@
             <Button Text="7" Grid.Row="1" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="8" Grid.Row="1" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="9" Grid.Row="1" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
-            <Button Text="√" Grid.Row="1" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
+            <Button Text="√()" Grid.Row="1" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="^" Grid.Row="1" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
 
             <Button Text="4" Grid.Row="2"  Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
