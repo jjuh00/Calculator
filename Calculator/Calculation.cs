@@ -6,22 +6,6 @@ namespace Calculator
 {
     public class Calculation
     {
-        private static readonly Dictionary<string, Func<double, double>> UnaryOperands = new()
-        {
-            { "sin", Math.Sin },
-            { "arcsin", Math.Asin },
-            { "cos", Math.Cos },
-            { "arccos", Math.Acos },
-            { "tan", Math.Tan },
-            { "arctan", Math.Atan },
-            { "ln", Math.Log }
-        };
-
-        private static readonly Dictionary<string, Func<double, double, double>> Logarithm = new()
-        {
-            { "log", (a, b) => Math.Log(b, a) }
-        };
-
         public class CalculationException : Exception
         {
             public string Msg { get; }
@@ -33,7 +17,7 @@ namespace Calculator
             }
         }
 
-        public static string Calculate(string input)
+        public static string Calculate(string input, bool isDegrees)
         {
             try
             {
@@ -43,6 +27,8 @@ namespace Calculator
                 //Replce constants
                 input = input.Replace("π", Math.PI.ToString(CultureInfo.InvariantCulture));
                 input = input.Replace("e", Math.E.ToString(CultureInfo.InvariantCulture));
+
+                if (isDegrees)
 
                 //Handle roots
                 input = HandleRoots(input);

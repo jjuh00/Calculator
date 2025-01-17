@@ -94,7 +94,7 @@ namespace Calculator
                     case "=":
                         try
                         {
-                            var calcResult = Calculation.Calculate(input);
+                            var calcResult = Calculation.Calculate(input, isDegrees);
                             ResLabel.Text = calcResult;
                             input = calcResult;
                             pointerPosition = calcResult.Length;
