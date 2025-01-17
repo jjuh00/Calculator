@@ -33,7 +33,7 @@ namespace Calculator
             }
         }
 
-        public static string Calculate(string input, bool isDegrees)
+        public static string Calculate(string input)
         {
             try
             {
@@ -82,9 +82,12 @@ namespace Calculator
                     );
             }
 
-            //Check bracket balance
+            //Preprocess the input to handle function which has brackets in it
+            string processedInput = HandleFunctionBrackets(input);
+
+            //Check for bracket balance
             int open = 0;
-            foreach(char c in input)
+            foreach(char c in processedInput)
             {
                 if (c == '(') open++;
                 if (c == ')') open--;
@@ -94,12 +97,12 @@ namespace Calculator
                         "Closing bracket is missing",
                         "Ensure all brackets are properly matched");
                 }
-                if (open > 0)
-                {
-                    throw new CalculationException(
-                        "Opening bracket is missing",
-                        "Ensure all brackets are properly matched");
-                }
+            }
+            if (open > 0)
+            {
+                throw new CalculationException(
+                    "Opening bracket is missing",
+                    "Ensure all brackets are properly matched");
             }
 
             //Check for consecutive operators
@@ -111,12 +114,46 @@ namespace Calculator
             }
 
             //Check for division by 0
-            if (input.Contains("/0"))
+            if (Regex.IsMatch(input, @"/\s*0+(?![.\d])"))
             {
                 throw new CalculationException(
                     "Division by zero",
                     "Cannot divide by zero, modify your expression");
             }
+        }
+
+        private static string HandleFunctionBrackets(string input)
+        {
+            var functions = new[]
+            {
+                "sin()", "cos()", "tan()",
+                "arcsin()", "arccos()", "arctan()",
+                "ln()", "log_()", "lg()",
+                "√()"
+            };
+            
+            string processedInput = input;
+
+            //Remove function parentheses from validation check
+            foreach (var func in functions)
+            {
+                //Handle basic functions
+                processedInput = Regex.Replace(
+                    processedInput,
+                    $@"{func}\([^()]*\",
+                    "_" //Replace with placeholder
+                );
+
+                //Handle nth base logarithm
+                if (func == "log")
+                {
+                    processedInput = Regex.Replace(
+                        processedInput,
+                        @"log_\d+\([^()]*\)",
+                        "_");
+                }
+            }
+            return processedInput;
         }
         
         private static string HandleRoots(string input)

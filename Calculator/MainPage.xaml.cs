@@ -1,16 +1,19 @@
-﻿namespace Calculator
+﻿using System.Text.RegularExpressions;
+
+namespace Calculator
 {
     public partial class MainPage : ContentPage
     {
-        private readonly Calculation calc;
+        private bool isDegrees = true;
+        private bool isNewCalculation = false;
         private string input;
         private int pointerPosition;
         private Stack<(int open, int close)> brackets = new();
+        private Button? clickedTrigBtn = null;
+
         public MainPage()
         {
             InitializeComponent();
-
-            calc = new Calculation();
 
             input = string.Empty;
             pointerPosition = 0;
@@ -40,25 +43,69 @@
             BracketPicker.SelectedIndexChanged += PickerIndexChanged;
         }
 
-        private void OnButtonClicked(object? sender, EventArgs e)
+        private async void OnButtonClicked(object? sender, EventArgs e)
         {
             if (sender is Button btn)
             {
-                switch (btn.Text)
+                if (isNewCalculation && btn.Text != "=")
+                {
+                    input = string.Empty;
+                    pointerPosition = 0;
+                    isNewCalculation = false;
+                }
+
+                string text = btn.Text;
+
+                switch (text)
                 {
                     case "sin":
-                        SinBtn.IsVisible = false;
-                        SinPicker.IsVisible = true;
-                        break;
-
                     case "cos":
-                        CosBtn.IsVisible = false;
-                        CosPicker.IsVisible = true;
-                        break;
-
                     case "tan":
-                        TanBtn.IsVisible = false;
-                        TanPicker.IsVisible = true;
+                        clickedTrigBtn = btn;
+                        bool? result = await DisplayAlert("Angle units",
+                            "Which units are you using?",
+                            "Degrees", "Radians");
+
+                        if (result != null)
+                        {
+                            isDegrees = result.Value;
+
+                            switch (text)
+                            {
+                                case "sin":
+                                    SinBtn.IsVisible = false;
+                                    SinPicker.IsVisible = true;
+                                    SinPicker.Focus();
+                                    break;
+                                case "cos":
+                                    CosBtn.IsVisible = false;
+                                    CosPicker.IsVisible = true;
+                                    CosPicker.Focus();
+                                    break;
+                                case "tan":
+                                    TanBtn.IsVisible = false;
+                                    TanPicker.IsVisible = true;
+                                    TanPicker.Focus();
+                                    break;
+                            }
+                        }
+                        break;
+                    
+                    case "=":
+                        try
+                        {
+                            var calcResult = Calculation.Calculate(input);
+                            ResLabel.Text = calcResult;
+                            input = calcResult;
+                            pointerPosition = calcResult.Length;
+                            isNewCalculation = true;
+                        }
+                        catch (Calculation.CalculationException ex)
+                        {
+                            await DisplayAlert("Calculation error",
+                                $"{ex.Msg}\n\nSuggestion: {ex.Suggestion}",
+                                "OK");
+                        }
                         break;
 
                     case "π":
@@ -89,26 +136,13 @@
                                 ))
                             );
                         }
-
-                        break;
-
-                    case "=":
-                        //Implement here "equals logic"
-                        break;
-
-                    case ".":
-                        //Implement here decimal separator logic
-                        break;
-
-                    case "":
-                        //Impelement here logic for other oparators
                         break;
 
                     default:
                         if (pointerPosition <= input.Length)
                         {
-                            input = input.Insert(pointerPosition, btn.Text);
-                            pointerPosition += btn.Text.Length;
+                            input = input.Insert(pointerPosition, text);
+                            pointerPosition += text.Length;
                         }
                         break;
                 }
@@ -158,7 +192,7 @@
             {
                 string item = picker.Items[picker.SelectedIndex];
 
-                //Handle the pointer's position within brackets
+                //Check if it's function with parentheses
                 if (item.Contains("()"))
                 {
                     if (pointerPosition <= input.Length)
@@ -217,6 +251,7 @@
 
                 UpdateResult();
 
+                //Hide picker and show button after selection
                 if (picker.SelectedIndex != 1)
                 {
                     switch (picker)
@@ -266,7 +301,15 @@
             Left.IsVisible = input.Length > 0;
             Right.IsVisible = input.Length > 0;
 
-            string text = input.Insert(pointerPosition, "|");
+            //Format the expression for display
+            string text = input;
+
+            //Add proper spacing around operators
+            text = Regex.Replace(text, @"([+\-*/^])", " $1 ");
+            
+            //Insert the pointer
+            text = input.Insert(pointerPosition, "|");
+
             ResLabel.Text = text;
         }
     }
