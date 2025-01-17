@@ -57,6 +57,9 @@ namespace Calculator
 
                 if (double.IsInfinity(result)) return "Infinity";
 
+                return Math.Abs(result) > 1e10 ?
+                    result.ToString("E", CultureInfo.InvariantCulture) :
+                    Math.Round(result, 5).ToString("E", CultureInfo.InvariantCulture);
             } 
             catch (CalculationException) { throw; }
 
@@ -134,14 +137,14 @@ namespace Calculator
             {
                 var baseNum = match.Groups[1].Value;
                 var power = match.Groups[2].Value;
-                return $"pow({base}, {power})";
+                return $"pow({baseNum}, {power})";
             });
         }
 
         private static string HandleLogarithms(string input)
         {
             //Handle natural logarithm
-            input = Regex.Replace(input, @"ln\((.*?\)", "log($1");
+            input = Regex.Replace(input, @"ln\((.*?)\)", "log($1");
 
             //Handle base-10 logarithm
             input = Regex.Replace(input, @"lg\((.*?)\)", match =>
