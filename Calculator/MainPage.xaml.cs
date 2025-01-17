@@ -9,7 +9,6 @@ namespace Calculator
         private string input;
         private int pointerPosition;
         private Stack<(int open, int close)> brackets = new();
-        private Button? clickedTrigBtn = null;
 
         public MainPage()
         {
@@ -61,7 +60,7 @@ namespace Calculator
                     case "sin":
                     case "cos":
                     case "tan":
-                        clickedTrigBtn = btn;
+                        Button? clickedTrigBtn = btn;
                         bool? result = await DisplayAlert("Angle units",
                             "Which units are you using?",
                             "Degrees", "Radians");
@@ -307,7 +306,7 @@ namespace Calculator
             //Add proper spacing around operators
             text = Regex.Replace(text, @"([+\-*/^])", " $1 ");
             
-            //Insert the pointer
+            //Insert the pointer (cursor)
             text = input.Insert(pointerPosition, "|");
 
             ResLabel.Text = text;

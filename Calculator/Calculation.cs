@@ -28,20 +28,25 @@ namespace Calculator
                 input = input.Replace("π", Math.PI.ToString(CultureInfo.InvariantCulture));
                 input = input.Replace("e", Math.E.ToString(CultureInfo.InvariantCulture));
 
+                //Handle trigonometric functions
                 if (isDegrees)
+                {
+                    input = ProcessTrigonometricInput(input);
+                }
 
-                //Handle roots
-                input = HandleRoots(input);
+                //Calculate all mathematical functions
+                input = ProcessFunctions(input);
 
-                //Handle exponents
-                input = HandleExponents(input);
-
-                //Handle logarithms
-                input = HandleLogarithms(input);
-
+                //Calculate the result
                 var result = DetermineExpression(input);
 
                 if (double.IsInfinity(result)) return "Infinity";
+
+                //Convert result back to degrees if needed
+                if (isDegrees && (input.Contains("arcsin") || input.Contains("arccos") || input.Contains("arctan")))
+                {
+                    result = result * 180 / Math.PI;
+                }
 
                 return Math.Abs(result) > 1e10 ?
                     result.ToString("E", CultureInfo.InvariantCulture) :
@@ -49,11 +54,151 @@ namespace Calculator
             } 
             catch (CalculationException) { throw; }
 
-            catch (Exception) 
+            catch (Exception ex) 
+            {
+                throw new CalculationException(
+                    $"Calculation error: {ex.Message}",
+                    "Check input for correct formatting and operators");
+            }
+        }
+
+
+        private static string ProcessFunctions(string input)
+        {
+            /*
+             Process order:
+            1) Trigonometric and basic functions
+            2) Logarithms
+            3) Roots
+            4) Exponents
+            */
+
+            string result = input;
+
+            //Handle trigonometric functions
+            result = HandleTrigonometry(result);
+
+            //Handle logarithms
+            result = HandleLogarithms(result);
+
+            //Handle roots
+            result = HandleRoots(result);
+
+            //Handle exponents
+            result = HandleExponents(result);
+
+            return result;
+        }
+
+        private static string HandleTrigonometry(string input)
+        {
+            var functions = new Dictionary<string, Func<double, double>>
+            {
+                {"sin", Math.Sin},
+                {"cos", Math.Cos},
+                {"tan", Math.Tan},
+                {"arcsin", Math.Asin},
+                {"arccos", Math.Acos},
+                {"arctan", Math.Atan}
+            };
+
+            string result = input;
+
+            foreach (var func in functions)
+            {
+                var trigRegex = $@"\b{func.Key}\(([^()]+)\)";
+                result = Regex.Replace(result, trigRegex, match =>
+                {
+                    var innerExp = match.Groups[1].Value;
+                    var value = DetermineExpression(innerExp);
+                    var calculated = func.Value(value);
+                    return calculated.ToString(CultureInfo.InvariantCulture);
+                });
+            }
+            return input;
+        }
+
+        private static string HandleLogarithms(string input)
+        {
+            //Process natural logarithm
+            input = Regex.Replace(input, @"ln\(([^()]+)\)", match =>
+            {
+                var value = DetermineExpression(match.Groups[1].Value);
+                return Math.Log(value).ToString(CultureInfo.InvariantCulture);
+            });
+
+            //Process base-10 logarithm
+            input = Regex.Replace(input, @"lg\(([^()]+)\)", match =>
+            {
+                var value = DetermineExpression(match.Groups[1].Value);
+                return Math.Log10(value).ToString(CultureInfo.InvariantCulture);
+            });
+
+            //Process nth base logarithm
+            input = Regex.Replace(input, @"log_(\d+)\(([^()]+)\)", match =>
+            {
+                var baseNum = double.Parse(match.Groups[1].Value);
+                var value = DetermineExpression(match.Groups[2].Value);
+                return Math.Log(value, baseNum).ToString(CultureInfo.InvariantCulture);
+            });
+
+            return input;
+        }
+
+        private static string HandleRoots(string input)
+        {
+            //Handle nth root
+            var rootRegex = @"(\d+)?√\(([^()]+)\)";
+            return Regex.Replace(input, rootRegex, match =>
+            {
+                var degree = string.IsNullOrEmpty(match.Groups[1].Value) ? 2 : int.Parse(match.Groups[1].Value);
+                var value = DetermineExpression(match.Groups[2].Value);
+                return Math.Pow(value, 1.0 / degree).ToString(CultureInfo.InvariantCulture);
+            });
+        }
+
+        private static string HandleExponents(string input)
+        {
+            var expRegex = @"(\d*\.?\d+)\^\(([^()]+)\)";
+            return Regex.Replace(input, expRegex, match =>
+            {
+                var baseNum = double.Parse(match.Groups[1].Value);
+                var power = DetermineExpression(match.Groups[2].Value);
+                return Math.Pow(baseNum, power).ToString(CultureInfo.InvariantCulture);
+            });
+        }
+
+        private static string ProcessTrigonometricInput(string input)
+        {
+            //Convert degrees to radians for regualar trigonometric functions
+            var functions = new[] { "sin", "cos", "tan" };
+            foreach (var function in functions)
+            {
+                input = Regex.Replace(input, $@"{function}\(([^()+]\)", match =>
+                {
+                    var degrees = DetermineExpression(match.Groups[1].Value);
+                    var radians = degrees * Math.PI / 180;
+                    return $"{function}({radians.ToString(CultureInfo.InvariantCulture)})";
+                });
+            }
+            return input;
+        }
+
+        private static double DetermineExpression(string expression)
+        {
+            try
+            {
+                var dataTable = new DataTable();
+                //Replace x with * for calculations
+                expression = expression.Replace("x", "*");
+                var result = dataTable.Compute(expression, "");
+                return Convert.ToDouble(result);
+            }
+            catch (Exception)
             {
                 throw new CalculationException(
                     "Invalid expression",
-                    "Check input for correct formatting and operators");
+                    "Check the format of expression");
             }
         }
 
@@ -68,142 +213,65 @@ namespace Calculator
                     );
             }
 
-            //Preprocess the input to handle function which has brackets in it
-            string processedInput = HandleFunctionBrackets(input);
+            //Check for invalid characters
+            if (Regex.IsMatch(input, @"[^0-9+\-*/().πe√^_xsin\sarcostanlg]"))
+            {
+                throw new CalculationException(
+                    "Invalid characters in expression",
+                    "Use only valid operators and functions");
+            }
 
-            //Check for bracket balance
-            int open = 0;
-            foreach(char c in processedInput)
+            //Check for missing operands
+            if (Regex.IsMatch(input, @"[+\-*/]\s*[+\-*/]")) //Don't allow consecutive operators
+            {
+                throw new CalculationException(
+                    "Missing operand",
+                    "Ensure there are numbers between operators");
+            }
+
+            //Check bracket balance
+            var open = 0;
+            foreach (char c in input)
             {
                 if (c == '(') open++;
                 if (c == ')') open--;
                 if (open < 0)
                 {
                     throw new CalculationException(
-                        "Closing bracket is missing",
+                        "Mismatched brackets",
                         "Ensure all brackets are properly matched");
                 }
             }
-            if (open > 0)
+            if (open != 0)
             {
                 throw new CalculationException(
-                    "Opening bracket is missing",
+                    "Mismatched brackets",
                     "Ensure all brackets are properly matched");
             }
 
-            //Check for consecutive operators
-            if (Regex.IsMatch(input, @"[\+\-\*\/]{2,}"))
+            //Check for empty parentheses
+            if (Regex.IsMatch(input, @"\(\s*\)"))
             {
                 throw new CalculationException(
-                    "Consecutive operators",
-                    "Ensure operators are separated by numbers or expressions");
+                    "Empty brackets detected",
+                    "Ensure all brackets contain values");
+            }
+
+            //Check for power operation without base
+            if (Regex.IsMatch(input, @"\^\s*$"))
+            {
+                throw new CalculationException(
+                    "Missing base for power operation",
+                    "Provide a number before (^)");
             }
 
             //Check for division by 0
-            if (Regex.IsMatch(input, @"/\s*0+(?![.\d])"))
+            if (Regex.IsMatch(input, @"/\s*0(?!\.\d)"))
             {
                 throw new CalculationException(
                     "Division by zero",
                     "Cannot divide by zero, modify your expression");
             }
-        }
-
-        private static string HandleFunctionBrackets(string input)
-        {
-            var functions = new[]
-            {
-                "sin()", "cos()", "tan()",
-                "arcsin()", "arccos()", "arctan()",
-                "ln()", "log_()", "lg()",
-                "√()"
-            };
-            
-            string processedInput = input;
-
-            //Remove function parentheses from validation check
-            foreach (var func in functions)
-            {
-                //Handle basic functions
-                processedInput = Regex.Replace(
-                    processedInput,
-                    $@"{func}\([^()]*\",
-                    "_" //Replace with placeholder
-                );
-
-                //Handle nth base logarithm
-                if (func == "log")
-                {
-                    processedInput = Regex.Replace(
-                        processedInput,
-                        @"log_\d+\([^()]*\)",
-                        "_");
-                }
-            }
-            return processedInput;
-        }
-        
-        private static string HandleRoots(string input)
-        {
-            var rootRegex = @"(\d*?√\((.*?)\)";
-            return Regex.Replace(input, rootRegex, match =>
-            {
-                var degree = string.IsNullOrEmpty(match.Groups[1].Value) ? "2" : match.Groups[1].Value;
-                var expression = match.Groups[2].Value;
-                return $"pow({expression}, 1.0/{degree})";
-            });
-        }
-
-        private static string HandleExponents(string input)
-        {
-            var expRegex = @"(\d+|\))^?\)).*?)\)";
-            return Regex.Replace(input, expRegex, match =>
-            {
-                var baseNum = match.Groups[1].Value;
-                var power = match.Groups[2].Value;
-                return $"pow({baseNum}, {power})";
-            });
-        }
-
-        private static string HandleLogarithms(string input)
-        {
-            //Handle natural logarithm
-            input = Regex.Replace(input, @"ln\((.*?)\)", "log($1");
-
-            //Handle base-10 logarithm
-            input = Regex.Replace(input, @"lg\((.*?)\)", match =>
-            {
-                var value = match.Groups[1].Value;
-                return $"log({value}, 10)";
-            });
-
-            //Handle base-n logarithm
-            input = Regex.Replace(input, @"log_(d+)\((.*?)\)", match =>
-            {
-                var baseNum = match.Groups[1].Value;
-                var value = match.Groups[2].Value;
-                return $"log({value}, {baseNum})";
-            });
-
-            return input;
-        }
-
-        public static double DetermineExpression(string expression)
-        {
-            var dataTable = new DataTable();
-            dataTable.Columns.Add("expression", typeof(string), expression);
-            var row = dataTable.NewRow();
-            dataTable.Rows.Add(row);
-            return double.Parse((string)row["expression"]);
-        }
-
-        private static double ConvertToRadians(double degrees)
-        {
-            return degrees * Math.PI / 180.0;
-        }
-
-        private static double ConvertToDegrees(double radians)
-        {
-            return radians * 180.0 / Math.PI;
         }
     }
 }
