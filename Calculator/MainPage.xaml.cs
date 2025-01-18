@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace Calculator
+﻿namespace Calculator
 {
     public partial class MainPage : ContentPage
     {
@@ -60,7 +58,6 @@ namespace Calculator
                     case "sin":
                     case "cos":
                     case "tan":
-                        Button? clickedTrigBtn = btn;
                         bool? result = await DisplayAlert("Angle units",
                             "Which units are you using?",
                             "Degrees", "Radians");
@@ -127,13 +124,6 @@ namespace Calculator
                         {
                             input = input.Remove(pointerPosition - 1, 1);
                             pointerPosition = Math.Max(0, pointerPosition - 1);
-                            brackets = new Stack<(int open, int close)>(
-                                brackets.Where(br => br.open >= pointerPosition || br.close >= pointerPosition)
-                                .Select(br => (
-                                    open: br.open >= pointerPosition ? br.open - 1 : br.open,
-                                    close: br.close >= pointerPosition ? br.close - 1 : br.close
-                                ))
-                            );
                         }
                         break;
 
@@ -153,16 +143,7 @@ namespace Calculator
         {
             if (pointerPosition > 0)
             {
-                //Check if pointer is at closing bracket
-                var _brackets = brackets.FirstOrDefault(br => br.close == pointerPosition - 1);
-                if (_brackets != default)
-                {
-                    pointerPosition = _brackets.open + 1; //Move out of brackets before an opening bracket
-                }
-                else
-                {
-                    pointerPosition--; //Move left normally
-                }
+                pointerPosition--;
                 UpdateResult();
             }
         }
@@ -171,16 +152,7 @@ namespace Calculator
         {
             if (pointerPosition < input.Length)
             {
-                //Check if pointer is at opening bracket
-                var _brackets = brackets.FirstOrDefault(br => br.open == pointerPosition);
-                if (_brackets != default)
-                {
-                    pointerPosition = _brackets.close + 1; //Move out of brackets after a closing brcaket
-                }
-                else
-                {
-                    pointerPosition++; //Move right normally
-                }
+                pointerPosition++;
                 UpdateResult();
             }
         }
@@ -300,15 +272,7 @@ namespace Calculator
             Left.IsVisible = input.Length > 0;
             Right.IsVisible = input.Length > 0;
 
-            //Format the expression for display
-            string text = input;
-
-            //Add proper spacing around operators
-            text = Regex.Replace(text, @"([+\-*/^])", " $1 ");
-            
-            //Insert the pointer (cursor)
-            text = input.Insert(pointerPosition, "|");
-
+            string text = input.Insert(pointerPosition, "|");
             ResLabel.Text = text;
         }
     }
