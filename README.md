@@ -1,1 +1,1 @@
-# Calculator
+A function calculator app that can calculate some trigonometric calculations, roots, exponents, and other basic matemathical calculations. Application is made on .NET MAUI platform. AI have been used to assist in the making of the app.
