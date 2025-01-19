@@ -31,7 +31,7 @@
                 }
             }
 
-            //Assing picker change events
+            //Assing picker change events 
             ConstPicker.SelectedIndexChanged += PickerIndexChanged;
             LogPicker.SelectedIndexChanged += PickerIndexChanged;
             BracketPicker.SelectedIndexChanged += PickerIndexChanged;

@@ -20,14 +20,14 @@ namespace Calculator
         {
             try
             {
-                //Validate input
+                //Validate input 
                 ValidateExpression(input);
 
-                //Replce constants
+                //Replce constants 
                 input = input.Replace("π", Math.PI.ToString(CultureInfo.InvariantCulture));
                 input = input.Replace("e", Math.E.ToString(CultureInfo.InvariantCulture));
 
-                //Process mathematical constants
+                //Process mathematical constants 
                 input = ProcessFunctions(input, isDegrees ?? false);
 
                 //Calculate the result

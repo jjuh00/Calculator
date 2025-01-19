@@ -101,7 +101,7 @@
             <Button Text="x" Grid.Row="3" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="/" Grid.Row="3" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
 
-            <!--Fifth row of buttons-->
+            <!--Fifth row of buttons--> 
             <Button Text="0" Grid.Row="4" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="." Grid.Row="4" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="=" Grid.Row="4" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
