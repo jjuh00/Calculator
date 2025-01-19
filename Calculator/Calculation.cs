@@ -16,7 +16,7 @@ namespace Calculator
             }
         }
 
-        public static string Calculate(string input, bool isDegrees)
+        public static string Calculate(string input, bool? isDegrees)
         {
             try
             {
@@ -28,26 +28,23 @@ namespace Calculator
                 input = input.Replace("e", Math.E.ToString(CultureInfo.InvariantCulture));
 
                 //Process mathematical constants
-                input = ProcessFunctions(input, isDegrees);
+                input = ProcessFunctions(input, isDegrees ?? false);
 
                 //Calculate the result
                 var result = DetermineExpression(input);
 
-                if (double.IsInfinity(result)) return "Infinity";
-
-                //Convert result back to degrees if needed
-                if (isDegrees && (input.Contains("arcsin") || input.Contains("arccos") || input.Contains("arctan")))
+                if (Math.Abs(result) > 1e10)
                 {
-                    result = result * 180 / Math.PI;
+                    return result.ToString("e", CultureInfo.InvariantCulture);
                 }
-
-                return Math.Abs(result) > 1e10 ?
-                    result.ToString("E", CultureInfo.InvariantCulture) :
-                    Math.Round(result, 5).ToString("E", CultureInfo.InvariantCulture);
-            } 
+                else
+                {
+                    return Math.Round(result, 5).ToString(CultureInfo.InvariantCulture);
+                }
+            }
             catch (CalculationException) { throw; }
 
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new CalculationException(
                     $"Calculation error: {ex.Message}",
@@ -59,8 +56,8 @@ namespace Calculator
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(expression))
-                    throw new CalculationException("Empty expression", "Enter a valid expression");
+                if (string.IsNullOrWhiteSpace(expression)) throw new CalculationException(
+                    "Empty expression", "Enter a valid expression");
 
                 var dataTable = new DataTable();
                 //Replace x with * for calculations
@@ -68,30 +65,14 @@ namespace Calculator
                 var result = dataTable.Compute(expression, "");
                 return Convert.ToDouble(result);
             }
-            catch (DivideByZeroException)
-            {
-                throw new CalculationException(
-                    "Division by zero",
-                    "Cannot divide by 0");
-            }
-            catch (Exception)
-            {
-                throw new CalculationException(
-                    "Invalid expression",
-                    "Check the format of expression");
-            }
+            catch (DivideByZeroException) { throw new CalculationException("Division by zero", "Cannot divide by 0"); }
+            catch (Exception) { throw new CalculationException("Invalid expression", "Check the format of expression"); }
         }
-
 
         private static string ProcessFunctions(string input, bool isDegrees)
         {
-            /*
-             Process order:
-            1) Trigonometric and basic functions
-            2) Logarithms
-            3) Roots
-            4) Exponents
-            */
+             //Process order: 1. Trigonometric/basic functions, 2. logarithms, 3. roots, 4. exponents
+
             if (string.IsNullOrWhiteSpace(input)) return input;
 
             string result = input;
@@ -106,14 +87,11 @@ namespace Calculator
 
         private static string HandleTrigonometry(string input, bool isDegrees)
         {
-            var functions = new Dictionary<string, Func<double, double>>
-            {
-                {"sin", Math.Sin},
-                {"cos", Math.Cos},
-                {"tan", Math.Tan},
-                {"arcsin", Math.Asin},
-                {"arccos", Math.Acos},
-                {"arctan", Math.Atan}
+            if (string.IsNullOrWhiteSpace(input)) return input;
+
+            var functions = new Dictionary<string, Func<double, double>> 
+            { 
+                {"sin", Math.Sin}, {"cos", Math.Cos}, {"tan", Math.Tan} 
             };
 
             foreach (var func in functions)
@@ -132,16 +110,12 @@ namespace Calculator
 
                     var value = DetermineExpression(innerExp);
 
-                    //Convert to radians (if degrees are used) for regulas trigonometric functions
-                    if (isDegrees && !func.Key.StartsWith("arc"))
-                    {
-                        value = value * Math.PI / 180;
-                    }
+                    //Convert to radians for trigonometric functions when needed
+                    if (isDegrees) value = value * Math.PI / 180;
 
                     var calculated = func.Value(value);
                     input = input.Substring(0, startIndex) +
-                        calculated.ToString(CultureInfo.InvariantCulture) +
-                        input.Substring(closeBracket + 1);
+                        calculated.ToString(CultureInfo.InvariantCulture) + input.Substring(closeBracket + 1);
                 }
             }
             return input;
@@ -168,8 +142,7 @@ namespace Calculator
                 var result = Math.Log(value);
 
                 input = input.Substring(0, startIndex) +
-                    result.ToString(CultureInfo.InvariantCulture) +
-                    input.Substring(closeBracket + 1);
+                    result.ToString(CultureInfo.InvariantCulture) + input.Substring(closeBracket + 1);
             }
 
             //Handle base-10 logarithm
@@ -188,8 +161,7 @@ namespace Calculator
                 var result = Math.Log10(value);
 
                 input = input.Substring(0, startIndex) +
-                    result.ToString(CultureInfo.InvariantCulture) +
-                    input.Substring(closeBracket + 1);
+                    result.ToString(CultureInfo.InvariantCulture) + input.Substring(closeBracket + 1);
             }
 
             //Handle nth base logarithm
@@ -214,10 +186,8 @@ namespace Calculator
                 var result = Math.Log(value, baseNum);
 
                 input = input.Substring(0, startIndex) +
-                    result.ToString(CultureInfo.InvariantCulture) +
-                    input.Substring(closeBracket + 1);
+                    result.ToString(CultureInfo.InvariantCulture) + input.Substring(closeBracket + 1);
             }
-
             return input;
         }
 
@@ -234,7 +204,7 @@ namespace Calculator
                 int degree = 2; //Default to square root
                 int start = root - 1;
 
-                //Find numbers before root
+                //Find numbers before root char
                 string numberStr = "";
                 while (start >= 0 && (char.IsDigit(input[start]) || input[start] == '.'))
                 {
@@ -266,11 +236,8 @@ namespace Calculator
                 var result = Math.Pow(value, 1.0 / degree);
 
                 input = input.Substring(0, root) +
-                    result.ToString(CultureInfo.InvariantCulture) +
-                    input.Substring(closeBracket + 1);
-
+                    result.ToString(CultureInfo.InvariantCulture) + input.Substring(closeBracket + 1);
             }
-
             return input;
         }
 
@@ -294,14 +261,11 @@ namespace Calculator
                 baseStart++;
 
                 if (baseStart >= baseEnd) throw new CalculationException(
-                    "Invalid power operation",
-                    "Provide a number before ^");
+                    "Invalid power operation", "Provide a number before ^");
 
                 string baseStr = input.Substring(baseStart, baseEnd - baseStart);
                 if (!double.TryParse(baseStr, out double baseNum))
-                    throw new CalculationException(
-                        "Invalid base number",
-                        "Provide a valid number before ^");
+                    throw new CalculationException("Invalid base number", "Provide a valid number before ^");
 
                 //Find and process the exponent
                 int openBracket = input.IndexOf('(', power);
@@ -317,10 +281,8 @@ namespace Calculator
                 var result = Math.Pow(baseNum, exponent);
 
                 input = input.Substring(0, baseStart) +
-                    result.ToString(CultureInfo.InvariantCulture) +
-                    input.Substring(closeBracket + 1);
+                    result.ToString(CultureInfo.InvariantCulture) + input.Substring(closeBracket + 1);
             }
-
             return input;
         }
 
@@ -342,24 +304,15 @@ namespace Calculator
         private static void ValidateExpression(string input)
         {
             //Chech for empty input
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                throw new CalculationException(
-                    "Input is empty",
-                    "Enter a mathematical expression"
-                    );
-            }
+            if (string.IsNullOrWhiteSpace(input)) throw new CalculationException(
+                "Input is empty", "Enter a mathematical expression");
 
             //Check for invalid characters
             string valid = "0123456789+-.*/()π√e^_xsinarcostanlg ";
             foreach(char c in input)
             {
-                if (!valid.Contains(c))
-                {
-                    throw new CalculationException(
-                        "Invalid characters in expression",
-                        "Use only valid operators and functions");
-                }
+                if (!valid.Contains(c)) throw new CalculationException(
+                    "Invalid characters in expression", "Use only valid operators and functions");
             }
 
             //Check for consective operators
@@ -369,20 +322,12 @@ namespace Calculator
                 char current = input[i];
                 if (operators.Contains(current))
                 {
-                    if (i == input.Length - 1)
-                    {
-                        throw new CalculationException(
-                            "Expression ends with an operator",
-                            "Complete the expression with a number");
-                    }
+                    if (i == input.Length - 1) throw new CalculationException(
+                        "Expression ends with an operator", "Complete the expression with a number");
 
                     char next = input[i + 1];
-                    if (operators.Contains(next))
-                    {
-                        throw new CalculationException(
-                            "Consecutive operators found",
-                            "Ensure there are numbers between operatos");
-                    }
+                    if (operators.Contains(next)) throw new CalculationException(
+                        "Consecutive operators found", "Ensure there are numbers between operatos");
                 }
             }
 
@@ -392,29 +337,17 @@ namespace Calculator
             {
                 if (c == '(') open++;
                 if (c == ')') open--;
-                if (open < 0)
-                {
-                    throw new CalculationException(
-                        "Mismatched brackets",
-                        "Ensure all brackets are properly matched");
-                }
+                if (open < 0) throw new CalculationException(
+                    "Mismatched brackets", "Ensure all brackets are properly matched");
             }
-            if (open != 0)
-            {
-                throw new CalculationException(
-                    "Mismatched brackets",
-                    "Ensure all brackets are properly matched");
-            }
+            if (open != 0) throw new CalculationException(
+                    "Mismatched brackets", "Ensure all brackets are properly matched");
 
             //Check for empty parentheses
             for (int i =0; i < input.Length - 1; i++)
             {
-                if (input[i] == '(' && input[i + 1] == ')')
-                {
-                    throw new CalculationException(
-                        "Empty brackets detected",
-                        "Ensure all brackets contain values");
-                }
+                if (input[i] == '(' && input[i + 1] == ')') throw new CalculationException(
+                    "Empty brackets detected", "Ensure all brackets contain values");
             }
 
             //Check for division by 0
@@ -423,11 +356,7 @@ namespace Calculator
                 if (input[i] == '/' && input[i + 1] == '0')
                 {
                     if (i + 2 >= input.Length || (!char.IsDigit(input[i + 2]) && input[i + 2] != '.'))
-                    {
-                        throw new CalculationException(
-                            "Division by zero",
-                            "Cannot divide by 0");
-                    }
+                        throw new CalculationException("Division by zero", "Cannot divide by 0");
                 }
             }
         }

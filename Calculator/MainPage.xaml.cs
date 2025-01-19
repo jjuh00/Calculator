@@ -2,7 +2,6 @@
 {
     public partial class MainPage : ContentPage
     {
-        private bool isDegrees = true;
         private bool isNewCalculation = false;
         private string input;
         private int pointerPosition;
@@ -32,12 +31,16 @@
                 }
             }
 
-            SinPicker.SelectedIndexChanged += PickerIndexChanged;
-            CosPicker.SelectedIndexChanged += PickerIndexChanged;
-            TanPicker.SelectedIndexChanged += PickerIndexChanged;
+            //Assing picker change events
             ConstPicker.SelectedIndexChanged += PickerIndexChanged;
             LogPicker.SelectedIndexChanged += PickerIndexChanged;
             BracketPicker.SelectedIndexChanged += PickerIndexChanged;
+        }
+
+        private static bool HasTrigFunction(string expression)
+        {
+            //Check if calculation has any trigonometric functions
+            return expression.Contains("sin(") || expression.Contains("cos(") || expression.Contains("tan(");
         }
 
         private async void OnButtonClicked(object? sender, EventArgs e)
@@ -46,51 +49,31 @@
             {
                 if (isNewCalculation && btn.Text != "=")
                 {
+                    //Reset input for a new calculation
                     input = string.Empty;
                     pointerPosition = 0;
                     isNewCalculation = false;
                 }
 
-                string text = btn.Text;
-
-                switch (text)
-                {
-                    case "sin":
-                    case "cos":
-                    case "tan":
-                        bool? result = await DisplayAlert("Angle units",
-                            "Which units are you using?",
-                            "Degrees", "Radians");
-
-                        if (result != null)
-                        {
-                            isDegrees = result.Value;
-
-                            switch (text)
-                            {
-                                case "sin":
-                                    SinBtn.IsVisible = false;
-                                    SinPicker.IsVisible = true;
-                                    SinPicker.Focus();
-                                    break;
-                                case "cos":
-                                    CosBtn.IsVisible = false;
-                                    CosPicker.IsVisible = true;
-                                    CosPicker.Focus();
-                                    break;
-                                case "tan":
-                                    TanBtn.IsVisible = false;
-                                    TanPicker.IsVisible = true;
-                                    TanPicker.Focus();
-                                    break;
-                            }
-                        }
-                        break;
-                    
+                switch (btn.Text)
+                {   
                     case "=":
                         try
                         {
-                            var calcResult = Calculation.Calculate(input, isDegrees);
+                            bool? isDegrees = null;
+
+                            if (HasTrigFunction(input))
+                            {
+                                //Ask user for the angle unit when calculation has trigonometric function
+                                bool? result = await DisplayAlert("Angle unit",
+                                    "Which angle units are you using?", "Degrees", "Radians");
+
+                                if (result != null) isDegrees = result.Value;
+                                else return;
+                            }
+                            
+                            //Calculate the result and update the dispaly
+                            var calcResult = Calculation.Calculate(input, isDegrees ?? false);
                             ResLabel.Text = calcResult;
                             input = calcResult;
                             pointerPosition = calcResult.Length;
@@ -130,8 +113,8 @@
                     default:
                         if (pointerPosition <= input.Length)
                         {
-                            input = input.Insert(pointerPosition, text);
-                            pointerPosition += text.Length;
+                            input = input.Insert(pointerPosition, btn.Text);
+                            pointerPosition += btn.Text.Length;
                         }
                         break;
                 }
@@ -143,6 +126,7 @@
         {
             if (pointerPosition > 0)
             {
+                //Move cursor to left
                 pointerPosition--;
                 UpdateResult();
             }
@@ -152,6 +136,7 @@
         {
             if (pointerPosition < input.Length)
             {
+                //Move cursor to right
                 pointerPosition++;
                 UpdateResult();
             }
@@ -227,21 +212,6 @@
                 {
                     switch (picker)
                     {
-                        case var _ when picker == SinPicker:
-                            SinPicker.IsVisible = false;
-                            SinBtn.IsVisible = true;
-                            break;
-
-                        case var _ when picker == CosPicker:
-                            CosPicker.IsVisible = false;
-                            CosBtn.IsVisible = true;
-                            break;
-
-                        case var _ when picker == TanPicker:
-                            TanPicker.IsVisible = false;
-                            TanBtn.IsVisible = true;
-                            break;
-
                         case var _ when picker == ConstPicker:
                             ConstPicker.IsVisible = false;
                             PiBtn.IsVisible = true;
@@ -272,6 +242,7 @@
             Left.IsVisible = input.Length > 0;
             Right.IsVisible = input.Length > 0;
 
+            //Insert the pointer (cursor)
             string text = input.Insert(pointerPosition, "|");
             ResLabel.Text = text;
         }

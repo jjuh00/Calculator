@@ -5,11 +5,13 @@
 
     <Grid RowDefinitions="*, 2*" ColumnDefinitions="*" Padding="5">
 
+	<!--"Display/screen" for navigation buttons and results-->
         <Border Grid.Row="0"
                 BackgroundColor="White"
                 StrokeShape="RoundRectangle 10"
                 Margin="5">
             <Grid ColumnDefinitions="Auto, *, Auto">
+                <!--Navigation button for moving pointer to left-->
                 <Button x:Name="Left" 
                         Text="←"
                         Grid.Column="0" 
@@ -19,7 +21,9 @@
                         Margin="10, 0, 0, 0" 
                         BackgroundColor="#4d0099" 
                         TextColor="White" />
+                <!--Label for showing inputs and result-->
                 <Label x:Name="ResLabel" Text="|" Grid.Column="1" FontSize="32" TextColor="Black" />
+                <!--Navigation button for moving pointer to right-->
                 <Button x:Name="Right" 
                         Text="→" 
                         Grid.Column="2" 
@@ -39,37 +43,12 @@
               RowSpacing="5"
               ColumnSpacing="5">
 
-            <Button x:Name="SinBtn" Text="sin" Grid.Row="0" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
-            <Picker x:Name="SinPicker" IsVisible="False" Grid.Row="0" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White">
-                <Picker.ItemsSource>
-                    <x:Array Type="{x:Type x:String}">
-                        <x:String>sin()</x:String>
-                        <x:String>arcsin()</x:String>
-                    </x:Array>
-                </Picker.ItemsSource>
-            </Picker>
-
-            <Button x:Name="CosBtn" Text="cos" Grid.Row="0" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
-            <Picker x:Name="CosPicker" IsVisible="False" Grid.Row="0" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White">
-                <Picker.ItemsSource>
-                    <x:Array Type="{x:Type x:String}">
-                        <x:String>cos()</x:String>
-                        <x:String>arccos()</x:String>
-                    </x:Array>
-                </Picker.ItemsSource>
-            </Picker>
-
-            <Button x:Name="TanBtn" Text="tan" Grid.Row="0" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
-            <Picker x:Name="TanPicker" IsVisible="False" Grid.Row="0" Grid.Column="2" BackgroundColor="#4d0099"  TextColor="White">
-                <Picker.ItemsSource>
-                    <x:Array Type="{x:Type x:String}">
-                        <x:String>tan()</x:String>
-                        <x:String>arctan()</x:String>
-                    </x:Array>
-                </Picker.ItemsSource>
-            </Picker>
-
+            <!--First row of buttons-->
+            <Button x:Name="SinBtn" Text="sin()" Grid.Row="0" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
+            <Button x:Name="CosBtn" Text="cos()" Grid.Row="0" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
+            <Button x:Name="TanBtn" Text="tan()" Grid.Row="0" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
             <Button x:Name="PiBtn" Text="π" Grid.Row="0" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
+            <!--Picker to select π or Euler's number-->
             <Picker x:Name="ConstPicker" IsVisible="False" Grid.Row="0" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
@@ -80,6 +59,7 @@
             </Picker>
 
             <Button x:Name="LogBtn" Text="log()" Grid.Row="0" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
+            <!--Picker for logarithm selection-->
             <Picker x:Name="LogPicker" IsVisible="False" Grid.Row="0" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
@@ -90,16 +70,19 @@
                 </Picker.ItemsSource>
             </Picker>
 
+            <!--Second row of buttons-->
             <Button Text="7" Grid.Row="1" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="8" Grid.Row="1" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="9" Grid.Row="1" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="√()" Grid.Row="1" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="^()" Grid.Row="1" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
 
+            <!--Third row of buttons-->
             <Button Text="4" Grid.Row="2"  Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="5" Grid.Row="2"  Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="6" Grid.Row="2"  Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
             <Button x:Name="BracketBtn" Text="( )" Grid.Row="2"  Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
+            <!--Picker for selecting an opening or a closing bracket-->
             <Picker x:Name="BracketPicker" IsVisible="False" Grid.Row="2" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
@@ -111,12 +94,14 @@
 
             <Button Text="⌫" Grid.Row="2"  Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
 
+            <!--Fourth row of buttons-->
             <Button Text="1" Grid.Row="3" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="2" Grid.Row="3" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="3" Grid.Row="3" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="x" Grid.Row="3" Grid.Column="3" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="/" Grid.Row="3" Grid.Column="4" BackgroundColor="#4d0099" TextColor="White" />
 
+            <!--Fifth row of buttons-->
             <Button Text="0" Grid.Row="4" Grid.Column="0" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="." Grid.Row="4" Grid.Column="1" BackgroundColor="#4d0099" TextColor="White" />
             <Button Text="=" Grid.Row="4" Grid.Column="2" BackgroundColor="#4d0099" TextColor="White" />
