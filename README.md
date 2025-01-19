@@ -1,1 +1,1 @@
-# Calculator
+Funktiolaskin, jolla voi laskea joitakin trigonometrisia laskuja, juuria, potensseja ja muita peruslaskuja. Ohjelma on tehty käyttäen .NET MAUI -alustaa. Sovelluksen tekemisessä on hyödynnetty tekoälyä.
