@@ -1,1 +1,1 @@
-Funktiolaskin, jolla voi laskea joitakin trigonometrisia laskuja, juuria, potensseja ja muita peruslaskuja. Ohjelma on tehty käyttäen .NET MAUI -alustaa. Sovelluksen tekemisessä on hyödynnetty tekoälyä.
+A function calculator app that can calculate some trigonometric calculations, roots, exponents, and other basic matemathical calculations. Application is made on .NET MAUI platform. AI have been used to assist in the making of the app.
