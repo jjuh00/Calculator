@@ -43,7 +43,6 @@ namespace Calculator
                 }
             }
             catch (CalculationException) { throw; }
-
             catch (Exception ex)
             {
                 throw new CalculationException(
@@ -56,8 +55,8 @@ namespace Calculator
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(expression)) throw new CalculationException(
-                    "Empty expression", "Enter a valid expression");
+                if (string.IsNullOrWhiteSpace(expression)) 
+                    throw new CalculationException("Empty expression", "Enter a valid expression");
 
                 var dataTable = new DataTable();
                 //Replace x with * for calculations
@@ -260,8 +259,8 @@ namespace Calculator
                 }
                 baseStart++;
 
-                if (baseStart >= baseEnd) throw new CalculationException(
-                    "Invalid power operation", "Provide a number before ^");
+                if (baseStart >= baseEnd) 
+                    throw new CalculationException("Invalid power operation", "Provide a number before ^");
 
                 string baseStr = input.Substring(baseStart, baseEnd - baseStart);
                 if (!double.TryParse(baseStr, out double baseNum))
@@ -304,15 +303,15 @@ namespace Calculator
         private static void ValidateExpression(string input)
         {
             //Chech for empty input
-            if (string.IsNullOrWhiteSpace(input)) throw new CalculationException(
-                "Input is empty", "Enter a mathematical expression");
+            if (string.IsNullOrWhiteSpace(input)) 
+                throw new CalculationException("Input is empty", "Enter a mathematical expression");
 
             //Check for invalid characters
             string valid = "0123456789+-.*/()π√e^_xsinarcostanlg ";
             foreach(char c in input)
             {
-                if (!valid.Contains(c)) throw new CalculationException(
-                    "Invalid characters in expression", "Use only valid operators and functions");
+                if (!valid.Contains(c)) 
+                    throw new CalculationException("Invalid characters in expression", "Use only valid operators and functions");
             }
 
             //Check for consective operators
@@ -322,12 +321,12 @@ namespace Calculator
                 char current = input[i];
                 if (operators.Contains(current))
                 {
-                    if (i == input.Length - 1) throw new CalculationException(
-                        "Expression ends with an operator", "Complete the expression with a number");
+                    if (i == input.Length - 1) 
+                        throw new CalculationException("Expression ends with an operator", "Complete the expression with a number");
 
                     char next = input[i + 1];
-                    if (operators.Contains(next)) throw new CalculationException(
-                        "Consecutive operators found", "Ensure there are numbers between operatos");
+                    if (operators.Contains(next)) 
+                        throw new CalculationException("Consecutive operators found", "Ensure there are numbers between operatos");
                 }
             }
 
@@ -337,17 +336,17 @@ namespace Calculator
             {
                 if (c == '(') open++;
                 if (c == ')') open--;
-                if (open < 0) throw new CalculationException(
-                    "Mismatched brackets", "Ensure all brackets are properly matched");
+                if (open < 0) 
+                    throw new CalculationException("Mismatched brackets", "Ensure all brackets are properly matched");
             }
-            if (open != 0) throw new CalculationException(
-                    "Mismatched brackets", "Ensure all brackets are properly matched");
+            if (open != 0) 
+                throw new CalculationException("Mismatched brackets", "Ensure all brackets are properly matched");
 
             //Check for empty parentheses
             for (int i =0; i < input.Length - 1; i++)
             {
-                if (input[i] == '(' && input[i + 1] == ')') throw new CalculationException(
-                    "Empty brackets detected", "Ensure all brackets contain values");
+                if (input[i] == '(' && input[i + 1] == ')') 
+                    throw new CalculationException("Empty brackets detected", "Ensure all brackets contain values");
             }
 
             //Check for division by 0
